@@ -2,9 +2,9 @@
  * @Author: Tom
  * @LastEditors: Tom
  * @Date: 2022-02-17 08:45:54
- * @LastEditTime: 2022-02-17 10:31:59
+ * @LastEditTime: 2022-02-17 13:35:04
  * @Email: str-liang@outlook.com
- * @FilePath: \ts-demo\ts03-类\index.ts
+ * @FilePath: \ts-note\ts03-类\index.ts
  * @Environment: Win 10
  * @Description: ts中的类
  */
@@ -197,32 +197,142 @@
  * 
  * 属性如果不加修饰符 默认就是  公有(public)
 */
-class Person{
-  public name:string; // 表示公有属性
-  protected age:number; // 表示保护类型属性
-  private sex:string;
-  constructor(n:string,a:number,s:string){
-    this.name=n;
-    this.age=a;
-    this.sex=s;
-  }
-  pRun():void{
-    console.log(this.sex) // 私有属性，只有自己可以访问
+// class Person{
+//   public name:string; // 表示公有属性
+//   protected age:number; // 表示保护类型属性
+//   private sex:string;
+//   constructor(n:string,a:number,s:string){
+//     this.name=n;
+//     this.age=a;
+//     this.sex=s;
+//   }
+//   pRun():void{
+//     console.log(this.sex) // 私有属性，只有自己可以访问
+//   }
+// }
+
+// class Web extends Person{
+//   // 子类里访问
+//     wRun():void{
+//       console.log(this.name+this.age)
+//       // console.log(this.sex) // 这是私有属性，在子类里面是无法访问的
+//       // 浏览器可以打印 是因为ts转换后的es5，ts控制台会报错
+//     }
+// }
+// let p1=new Person('张三',12,'男')
+// let w1=new Web('赵四',13,'女')
+// // 外部访问 
+// console.log(p1.name)
+// console.log(w1.name)
+// p1.pRun()
+// w1.wRun()
+
+
+// 4、静态属性和静态方法
+// 4.1、es5中 静态属性 静态方法
+// function Person(){
+//   this.run1=function(){ // 实例方法 必须new调用
+
+//   }
+// }
+
+// Person.run2=function(){ // 静态方法
+
+// }
+
+// let p1=new Person();
+// p1.run1()
+// Person.run2() // 静态方法调用
+
+
+// 4.2、ts中静态属性和静态方法
+// class Person {
+//   public name:string;
+//   static staticName:string='我是静态name'
+//   constructor(n:string) {
+//       this.name=n
+//   }
+
+//   // 实例方法
+//   run():void{
+//     console.log(this.name)
+//   }
+
+//   // 静态方法
+//   // 注意静态方法不能调用类里面的属性
+//   static work():void{
+//     console.log(Person.staticName+'静态方法')
+//   }
+// }
+
+// let p1=new Person('张三')
+// p1.run()
+// Person.work() // 调用静态方法
+// console.log(Person.staticName)
+
+
+// 5、抽象类 多态
+// 什么是多态:父类定义一个方法不去实现，让继承他的子类去实现，每一个子类有不同的表现
+// 多态 也属于继承的一种
+// class Animal {
+//    name:string;
+
+//   constructor(n:string) {
+//     this.name=n
+//   }
+
+//   eat():void{ // 具体吃什么，让继承他的子类去实现，每一个子类的表现都不一样
+//     console.log('吃的方法')    
+//   }
+// }
+
+// class Dog extends Animal {
+//     constructor(n:string){
+//       super(n)
+//     }
+
+//     eat() {
+//       return this.name+'吃肉'
+//     }
+// }
+
+// class Cat extends Animal {
+//     constructor(n:string){
+//       super(n)
+//     }
+
+//     eat() {
+//       return this.name+'吃老鼠'
+//     }
+// }
+// let c1=new Cat('猫')
+// console.log(c1.eat())
+
+
+// 4.3、抽象类
+// 抽象类 他是提供其他类继承的基类，不能直接被实例化
+// 同abstract关键字定义抽象类和抽象方法，抽象类中的抽象方法不包含具体实现并且必须在派生类中实现
+// abstract 抽象方法只能放在抽象类里面
+// 抽象类和抽象方法用来定义标准， 标准: Animal 这个类要求他的子类 必须包含eat方法
+
+abstract class Animal {
+   name:string;
+   constructor(n:string){
+    this.name=n
+   }
+ abstract eat():any;
+}
+// let a1=new Animal() // 错误写法
+
+class Dog extends Animal{
+   constructor(n:string){
+    super(n)
+   }
+  //  子类 必须定义 eat 方法
+  eat(){
+    console.log(this.name+'吃肉')
   }
 }
 
-class Web extends Person{
-  // 子类里访问
-    wRun():void{
-      console.log(this.name+this.age)
-      // console.log(this.sex) // 这是私有属性，在子类里面是无法访问的
-      // 浏览器可以打印 是因为ts转换后的es5，ts控制台会报错
-    }
-}
-let p1=new Person('张三',12,'男')
-let w1=new Web('赵四',13,'女')
-// 外部访问 
-console.log(p1.name)
-console.log(w1.name)
-p1.pRun()
-w1.wRun()
+let d1=new Dog('狗子')
+d1.eat()
