@@ -504,6 +504,8 @@
 
 ###### 静态属性 和 静态方法
 
+- 通过`static`关键字 定义静态属性和静态方法
+
 - ```js
   class Person {
     public name:string;
@@ -576,9 +578,9 @@
 
   - 抽象类 他是提供其他类继承的基类，不能直接被实例化
 
-  - 同abstract关键字定义抽象类和抽象方法，抽象类中的抽象方法不包含具体实现并且必须在派生类中实现
+  - `abstract`关键字定义抽象类和抽象方法，抽象类中的抽象方法不包含具体实现并且必须在派生类中实现
 
-  - abstract 抽象方法只能放在抽象类里面
+  - `abstract `抽象方法只能放在抽象类里面
 
   - 抽象类和抽象方法用来定义标准， 标准: Animal 这个类要求他的子类 必须包含eat方法
 
@@ -614,7 +616,7 @@
   - 在面向对象的编程中，接口是一种规范的定义，它定义了行为和动作的规范，在程序设计里面，接口起到一种限制和规范的作用
   - 接口定义了某一批所需要遵守的规范，接口不关心这些类的内部状态数据，也不关心这些类里方法的实现细节，它只规定这批类必须提供某些方法，提供这些方法的类就可以满足实际需要
   - ts中的接口类似于java，同时还增加了更灵活的接口类型，包括属性、函数、可索引和类等
-  - **一种定义标准**
+  - **一种定义标准** 通过**interface**关键字来定义
 
 ##### 属性类接口
 
@@ -779,6 +781,186 @@
     p1.eat()
     p1.work()
     p1.coding('写代码')
+    ```
+
+### 泛型
+
+##### 泛型的定义
+
+- 泛型: 软件工程中，我们不仅要创建一致的定义良好的API，同时也要考虑可重复性。
+- 组件不仅能够支持当前的数据类型，同时也能支持未来的数据类型，这在创建大型系统时为你提供了十分灵活的功能
+- 在像C# 和 java 这样的语言中，可以使用泛型来创建可重用的组件，一个组件可以支持多种的数据
+- 这样用户就可以以自己的数据类型来使用组件
+- **通俗理解: 泛型就是解决 类  接口 方法的复用性、以及对不特定数据类型的支持（类型校验）**
+
+##### 泛型函数
+
+- 要求:同时返回string类型和 number类型，要求传入什么类型就返回什么类型
+
+- 方法一  缺点 any 放弃了类型检查,返回类型可以不一致
+
+  - ```js
+    function getData(name:any):any{
+        return name
+    }
+    ```
+
+- 方法二 使用泛型:可以支持不特定的数据类型
+
+- T 表示泛型，具体什么类型是调用这个方法的时候决定的
+
+  - ```js
+    function getData<T>(val:T):T{
+      return val
+    }
+    console.log(getData<number>(123))
+    console.log(typeof getData<number>(123))
+    ```
+
+##### 泛型类
+
+- 比如有个最小堆算法，需要同时支持返回数字和字符串两种类型，通过类的泛型实现
+
+- 不使用泛型写法
+
+  - ```js
+    class MinClass{
+      public list:number[]=[];
+    
+      add(num:number){
+        this.list.push(num)
+      }
+      min():number{
+        let minNum=this.list[0]
+        for(let i=0;i<this.list.length;i++){
+          if(minNum>this.list[i]){
+            minNum=this.list[i]
+          }
+        }
+        return minNum
+      }
+    }
+    
+    let m1=new MinClass()
+    m1.add(2)
+    m1.add(1)
+    m1.add(3)
+    console.log(m1.min())
+    ```
+
+- 泛型写法
+
+  - ```js
+    class MinClass<T>{
+      public list:T[]=[];
+    
+      add(value:T):void{
+        this.list.push(value)
+      }
+      min():T{
+        let minNum=this.list[0]
+        for(let i=0;i<this.list.length;i++){
+          if(minNum>this.list[i]){
+            minNum=this.list[i]
+          }
+        }
+        return minNum
+      }
+    }
+    let m1=new MinClass<number>(); // 实例化类  并且制定了类的T代表的类型是number
+    m1.add(2)
+    m1.add(1)
+    m1.add(3)
+    console.log(m1.min())
+    ```
+
+##### 泛型接口
+
+- 函数类型接口 写法
+
+  - ```js
+    interface ConfigFn{
+      (value1:string,value2:string):string;
+    }
+    
+    let steData:ConfigFn=function(value1:string,value2:string):string{
+      return value1+value2
+    }
+    console.log(steData('name','张三'))
+    ```
+
+- 泛型接口 写法1
+
+  - ```js
+    interface ConfigFn{
+      <T>(value1:T):T;
+    }
+    
+    let steData:ConfigFn=function<T>(value1:T):T{
+      return value1
+    }
+    console.log(steData<string>('name'))
+    ```
+
+- 泛型接口 写法2
+
+  - ```js
+    interface ConfigFn<T>{
+        (value:T):T;
+    }
+    
+    function getData<T>(value:T):T{
+      return value
+    }
+    let myGetData:ConfigFn<string>=getData;
+    console.log(myGetData('20'))
+    ```
+
+- 小例子:操作数据库的泛型类
+
+  - ```js
+    class MysqlDb<T>{
+      add(user:T):boolean{
+        console.log(user)
+        return true;
+      }
+    }
+    // 1.定义一个User类和数据库进行映射
+    class User{
+      userName:string | undefined;
+      password:string | undefined;
+    }
+    
+    let u1=new User();
+    u1.userName='张三';
+    u1.password='12312';
+    
+    let m1=new MysqlDb<User>();
+    m1.add(u1)
+    ```
+
+  - ```js
+    class MysqlDb<T>{
+      add(user:T):boolean{
+        console.log(user)
+        return true;
+      }
+    }
+    // 2.定义一个Cat类，和数据库进行映射
+    class Cat{
+      name:string | undefined;
+      color:string | undefined;
+      constructor(params:{
+        n:string | undefined,
+        c:string | undefined
+      }){
+        this.name=params.n
+        this.color=params.c
+      }
+    }
+    let c1=new Cat({n:'小猫',c:'red'})
+    let Db=new MysqlDb<Cat>()
+    Db.add(c1)
     ```
 
 
